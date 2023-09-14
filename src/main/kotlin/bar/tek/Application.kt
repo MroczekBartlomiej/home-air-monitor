@@ -1,11 +1,13 @@
 package bar.tek
 
-import bar.tek.plugins.*
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
+import bar.tek.plugins.configureRouting
+import bar.tek.plugins.configureTemplating
+import io.ktor.http.ContentType
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respondText
 import kotlinx.css.CssBuilder
 
 fun main() {
