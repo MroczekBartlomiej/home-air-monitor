@@ -1,25 +1,27 @@
 package bar.tek
 
-import bar.tek.plugins.configureRouting
-import bar.tek.plugins.configureTemplating
+import bar.tek.plugins.temperature
+import bar.tek.service.SensorClient
+import bar.tek.service.SensorService
 import io.ktor.http.ContentType
-import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.routing
 import kotlinx.css.CssBuilder
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    val sensorService = SensorService(SensorClient())
+
+    embeddedServer(Netty, port = 8080) {
+        routing {
+            temperature(sensorService)
+        }
+    }
         .start(wait = true)
 }
 
 suspend inline fun ApplicationCall.respondCss(builder: CssBuilder.() -> Unit) {
     this.respondText(CssBuilder().apply(builder).toString(), ContentType.Text.CSS)
-}
-
-fun Application.module() {
-    configureTemplating()
-    configureRouting()
 }
