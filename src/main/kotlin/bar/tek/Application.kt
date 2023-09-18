@@ -1,5 +1,7 @@
 package bar.tek
 
+import bar.tek.database.DataFromSensorRepository
+import bar.tek.database.DatabaseConfiguration
 import bar.tek.plugins.temperature
 import bar.tek.service.SensorClient
 import bar.tek.service.SensorService
@@ -12,8 +14,8 @@ import io.ktor.server.routing.routing
 import kotlinx.css.CssBuilder
 
 fun main() {
-    val sensorService = SensorService(SensorClient())
-
+    val firebaseApp = DatabaseConfiguration().initDatabase()
+    val sensorService = SensorService(SensorClient(), DataFromSensorRepository(firebaseApp))
     embeddedServer(Netty, port = 8080) {
         routing {
             temperature(sensorService)

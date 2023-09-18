@@ -25,4 +25,11 @@ fun Route.temperature(sensorService: SensorService) {
             }
         }
     }
+
+    get("/temperature-read") {
+        call.respondHtml(HttpStatusCode.OK) {
+            val dataFromSensor = sensorService.savedTemperature()
+            head { title("Home Air Monitor") }
+        }
+    }
 }
