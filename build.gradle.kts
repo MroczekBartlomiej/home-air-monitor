@@ -2,6 +2,7 @@ val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val kotlin_css_version: String by project
+val bootstrap_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.10"
@@ -35,6 +36,9 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation ("com.google.firebase:firebase-admin:9.2.0")
+    implementation("io.ktor:ktor-server-webjars:$ktor_version")
+    implementation("org.webjars:bootstrap:$bootstrap_version")
+    implementation("org.webjars.npm:bootstrap-icons:1.11.1")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

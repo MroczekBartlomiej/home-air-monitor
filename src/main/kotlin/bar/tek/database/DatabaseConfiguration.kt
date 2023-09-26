@@ -14,7 +14,7 @@ class DatabaseConfiguration {
 
     fun initDatabase(): FirebaseApp? {
         val fileInputStream =
-            FileInputStream("/Users/bartlomiejmroczek/IdeaProjects/home-air-monitor/src/main/resources/db.json")
+            FileInputStream("src/main/resources/db.json")
         // Fetch the service account key JSON file contents
         // Fetch the service account key JSON file contents
         // Initialize the app with a service account, granting admin privileges
