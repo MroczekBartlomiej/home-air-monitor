@@ -8,7 +8,10 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import io.ktor.client.request.get
+import io.ktor.util.logging.KtorSimpleLogger
+import kotlinx.css.body
 
+internal val LOGGER = KtorSimpleLogger("com.example.RequestTracePlugin")
 
 class SensorClient(
     val client: HttpClient = HttpClient(CIO) {
@@ -22,7 +25,10 @@ class SensorClient(
 ) {
 
     suspend fun callSensor(): DataFromSensor {
-        val body = client.get("http://192.168.0.114:88/").body<DataFromSensor>()
+        LOGGER.info("Reading temperature from sensor.")
+        val body = client.get("http://192.168.0.114:88/")
+            .also { LOGGER.info("Temperature reading completed with status: ${it.status.value } : ${it.status.description } ") }
+            .body<DataFromSensor>()
         return body
     }
 }
