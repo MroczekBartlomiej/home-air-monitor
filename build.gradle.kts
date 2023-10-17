@@ -35,10 +35,11 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    implementation ("com.google.firebase:firebase-admin:9.2.0")
     implementation("io.ktor:ktor-server-webjars:$ktor_version")
     implementation("org.webjars:bootstrap:$bootstrap_version")
     implementation("org.webjars.npm:bootstrap-icons:1.11.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:4.11.0")
+
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

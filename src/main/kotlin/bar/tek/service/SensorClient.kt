@@ -9,7 +9,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import io.ktor.client.request.get
 import io.ktor.util.logging.KtorSimpleLogger
-import kotlinx.css.body
 
 internal val LOGGER = KtorSimpleLogger("com.example.RequestTracePlugin")
 
