@@ -2,6 +2,7 @@ package bar.tek
 
 import bar.tek.database.SensorDataRepository
 import bar.tek.plugins.temperature
+import bar.tek.service.DataFromSensorService
 import bar.tek.service.Every
 import bar.tek.service.Scheduler
 import bar.tek.service.SensorClient
@@ -18,6 +19,7 @@ import kotlinx.css.CssBuilder
 import java.util.concurrent.TimeUnit
 
 fun main() {
+    val dataFromSensorService = DataFromSensorService(SensorDataRepository())
     val sensorService = SensorService(SensorClient(), SensorDataRepository())
     val scheduler = Scheduler(sensorService::readTemperature)
     scheduler.scheduleExecution(Every(5, TimeUnit.MINUTES))
@@ -27,7 +29,7 @@ fun main() {
             path = "assets"
         }
         routing {
-            temperature(sensorService)
+            temperature(sensorService, dataFromSensorService)
         }
     }.start(wait = true)
 }

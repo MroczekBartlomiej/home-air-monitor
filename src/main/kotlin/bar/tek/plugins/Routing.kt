@@ -1,6 +1,7 @@
 package bar.tek.plugins
 
 import bar.tek.respondCss
+import bar.tek.service.DataFromSensorService
 import bar.tek.service.SensorService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -12,13 +13,13 @@ import kotlinx.css.backgroundColor
 import kotlinx.css.body
 import kotlinx.css.color
 import kotlinx.css.margin
+import kotlinx.css.pre
 import kotlinx.css.px
 import kotlinx.html.DIV
 import kotlinx.html.HEAD
 import kotlinx.html.LI
 import kotlinx.html.a
 import kotlinx.html.body
-import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h5
@@ -27,13 +28,13 @@ import kotlinx.html.li
 import kotlinx.html.link
 import kotlinx.html.p
 import kotlinx.html.script
-import kotlinx.html.small
 import kotlinx.html.span
 import kotlinx.html.title
 import kotlinx.html.ul
+import kotlinx.html.unsafe
 
 
-fun Route.temperature(sensorService: SensorService) {
+fun Route.temperature(sensorService: SensorService, dataFromSensorService: DataFromSensorService) {
     get("/temperature") {
         call.respondHtml(HttpStatusCode.OK) {
             val dataFromSensor = sensorService.readTemperature()
@@ -76,6 +77,16 @@ fun Route.temperature(sensorService: SensorService) {
         }
     }
     get("/graphs") {
+        val dataFromSensors = dataFromSensorService.getDataFromSensors(7L)
+        val temperature = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.temperature }
+        val labels = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.readTime.toString() }
+
+        println(temperature.joinToString(prefix = "'", separator = "','", postfix = "'"))
+        println(labels.joinToString(prefix = "'", separator = "','", postfix = "'"))
+
+        val label = labels.joinToString(prefix = "'", separator = "','", postfix = "'")
+        val data = temperature.joinToString(prefix = "'", separator = "','", postfix = "'")
+
         call.respondHtml {
             head {
                 head()
@@ -83,6 +94,42 @@ fun Route.temperature(sensorService: SensorService) {
             body {
                 div(classes = "px-3 py-2 text-bg-dark border-bottom", block = header())
                 div { h1 { +"graphs" } }
+                div(classes = "d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start") {
+                    div(classes = "container") {
+                        unsafe {
+                            +"""
+                    <div>
+              <canvas id="myChart"></canvas>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <script>
+              const ctx = document.getElementById('myChart');
+
+              new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels:[$label],
+                  datasets: [{
+                    data: [$data],
+                    borderWidth: 1,
+                    tension: 0.5
+                  }]
+                },
+                options: {
+                  scales: {
+                    y: {
+                      beginAtZero: false
+                    }
+                  }
+                }
+              });
+            </script>
+                """.trimIndent()
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,7 +178,11 @@ private fun HEAD.head() {
 fun sensorsBody(sensorService: SensorService): DIV.() -> Unit = {
     div(classes = "d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start") {
         div(classes = "container") {
-            div(classes = "d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start", block = sensorCard(sensorService))
+            div(
+                classes = "d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start",
+                block = sensorCard(sensorService)
+            )
+
         }
     }
 }
