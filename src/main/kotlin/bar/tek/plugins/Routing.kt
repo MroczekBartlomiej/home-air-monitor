@@ -13,7 +13,6 @@ import kotlinx.css.backgroundColor
 import kotlinx.css.body
 import kotlinx.css.color
 import kotlinx.css.margin
-import kotlinx.css.pre
 import kotlinx.css.px
 import kotlinx.html.DIV
 import kotlinx.html.HEAD
@@ -34,7 +33,8 @@ import kotlinx.html.ul
 import kotlinx.html.unsafe
 
 
-fun Route.temperature(sensorService: SensorService, dataFromSensorService: DataFromSensorService) {
+fun Route.appRouting(sensorService: SensorService, dataFromSensorService: DataFromSensorService) {
+    //Endpoint tylko i wyłącznie demnstracyjny na potrzeby prezentacji
     get("/temperature") {
         call.respondHtml(HttpStatusCode.OK) {
             val dataFromSensor = sensorService.readTemperature()
@@ -47,12 +47,6 @@ fun Route.temperature(sensorService: SensorService, dataFromSensorService: DataF
         }
     }
 
-    get("/temperature-read") {
-        call.respondHtml(HttpStatusCode.OK) {
-            val dataFromSensor = sensorService.savedTemperature()
-            head { title("Home Air Monitor") }
-        }
-    }
 
 //HTML and CSS
     get("/home") {
@@ -80,9 +74,6 @@ fun Route.temperature(sensorService: SensorService, dataFromSensorService: DataF
         val dataFromSensors = dataFromSensorService.getDataFromSensors(7L)
         val temperature = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.temperature }
         val labels = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.readTime.toString() }
-
-        println(temperature.joinToString(prefix = "'", separator = "','", postfix = "'"))
-        println(labels.joinToString(prefix = "'", separator = "','", postfix = "'"))
 
         val label = labels.joinToString(prefix = "'", separator = "','", postfix = "'")
         val data = temperature.joinToString(prefix = "'", separator = "','", postfix = "'")
@@ -146,18 +137,6 @@ fun Route.temperature(sensorService: SensorService, dataFromSensorService: DataF
         }
     }
 
-
-    get("/styles.css") {
-        call.respondCss {
-            body {
-                backgroundColor = Color.darkBlue
-                margin(0.px)
-            }
-            rule("h1.page-title") {
-                color = Color.white
-            }
-        }
-    }
 }
 
 private fun HEAD.head() {

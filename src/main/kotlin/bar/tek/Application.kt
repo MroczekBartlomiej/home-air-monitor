@@ -1,7 +1,7 @@
 package bar.tek
 
 import bar.tek.database.SensorDataRepository
-import bar.tek.plugins.temperature
+import bar.tek.plugins.appRouting
 import bar.tek.service.DataFromSensorService
 import bar.tek.service.Every
 import bar.tek.service.Scheduler
@@ -29,7 +29,7 @@ fun main() {
             path = "assets"
         }
         routing {
-            temperature(sensorService, dataFromSensorService)
+            appRouting(sensorService, dataFromSensorService)
         }
     }.start(wait = true)
 }
