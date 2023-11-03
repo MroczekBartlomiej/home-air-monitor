@@ -1,19 +1,12 @@
-package bar.tek.plugins
+package bar.tek.api
 
-import bar.tek.respondCss
-import bar.tek.service.DataFromSensorService
-import bar.tek.service.SensorService
+import bar.tek.pastData.PastTemperatureDataService
+import bar.tek.realTimeData.SensorService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import kotlinx.css.Color
-import kotlinx.css.backgroundColor
-import kotlinx.css.body
-import kotlinx.css.color
-import kotlinx.css.margin
-import kotlinx.css.px
 import kotlinx.html.DIV
 import kotlinx.html.HEAD
 import kotlinx.html.LI
@@ -33,7 +26,7 @@ import kotlinx.html.ul
 import kotlinx.html.unsafe
 
 
-fun Route.appRouting(sensorService: SensorService, dataFromSensorService: DataFromSensorService) {
+fun Route.appRouting(sensorService: SensorService, pastTemperatureDataService: PastTemperatureDataService) {
     //Endpoint tylko i wyłącznie demnstracyjny na potrzeby prezentacji
     get("/temperature") {
         call.respondHtml(HttpStatusCode.OK) {
@@ -71,7 +64,7 @@ fun Route.appRouting(sensorService: SensorService, dataFromSensorService: DataFr
         }
     }
     get("/graphs") {
-        val dataFromSensors = dataFromSensorService.getDataFromSensors(7L)
+        val dataFromSensors = pastTemperatureDataService.getPastData(1L)
         val temperature = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.temperature }
         val labels = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.readTime.toString() }
 

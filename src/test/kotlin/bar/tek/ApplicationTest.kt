@@ -1,6 +1,6 @@
 package bar.tek
 
-import bar.tek.plugins.configureRouting
+import bar.tek.api.configureRouting
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode

@@ -1,12 +1,12 @@
 package bar.tek
 
-import bar.tek.database.SensorDataRepository
-import bar.tek.plugins.appRouting
-import bar.tek.service.DataFromSensorService
-import bar.tek.service.Every
-import bar.tek.service.Scheduler
-import bar.tek.service.SensorClient
-import bar.tek.service.SensorService
+import bar.tek.pastData.PastTemperatureDataRepository
+import bar.tek.api.appRouting
+import bar.tek.pastData.PastTemperatureDataService
+import bar.tek.realTimeData.Every
+import bar.tek.realTimeData.Scheduler
+import bar.tek.realTimeData.SensorClient
+import bar.tek.realTimeData.SensorService
 import io.ktor.http.ContentType
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.install
@@ -19,8 +19,8 @@ import kotlinx.css.CssBuilder
 import java.util.concurrent.TimeUnit
 
 fun main() {
-    val dataFromSensorService = DataFromSensorService(SensorDataRepository())
-    val sensorService = SensorService(SensorClient(), SensorDataRepository())
+    val pastTemperatureDataService = PastTemperatureDataService(PastTemperatureDataRepository())
+    val sensorService = SensorService(SensorClient(), PastTemperatureDataRepository())
     val scheduler = Scheduler(sensorService::readTemperature)
     scheduler.scheduleExecution(Every(5, TimeUnit.MINUTES))
 
@@ -29,7 +29,7 @@ fun main() {
             path = "assets"
         }
         routing {
-            appRouting(sensorService, dataFromSensorService)
+            appRouting(sensorService, pastTemperatureDataService)
         }
     }.start(wait = true)
 }

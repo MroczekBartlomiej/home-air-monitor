@@ -1,4 +1,4 @@
-package bar.tek.model
+package bar.tek.realTimeData
 
 import kotlinx.serialization.Serializable
 

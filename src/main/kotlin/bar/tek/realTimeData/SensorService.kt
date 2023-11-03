@@ -1,15 +1,14 @@
-package bar.tek.service
+package bar.tek.realTimeData
 
-import bar.tek.database.SensorDataRepository
-import bar.tek.model.DataFromSensor
-import bar.tek.model.DataFromSensorMongoDocument
+import bar.tek.pastData.PastTemperatureDataRepository
+import bar.tek.pastData.PastTemperatureDataMongoDocument
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 import java.time.LocalDateTime
 
 class SensorService(
     private val sensorClient: SensorClient,
-    private val dataFromSensorRepository: SensorDataRepository
+    private val dataFromSensorRepository: PastTemperatureDataRepository
 ) {
 
     fun readTemperature(): DataFromSensor {
@@ -17,7 +16,7 @@ class SensorService(
             return@runBlocking sensorClient.callSensor()
         }
         val dataFromSensorDocument =
-            DataFromSensorMongoDocument(
+            PastTemperatureDataMongoDocument(
                 ObjectId(),
                 dataFromSensor.temperature,
                 dataFromSensor.humidity,
@@ -28,7 +27,4 @@ class SensorService(
         return dataFromSensor
     }
 
-    fun savedTemperature() {
-        //dataFromSensorRepository.readLastTemperature()
-    }
 }
