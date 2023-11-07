@@ -49,6 +49,6 @@ dependencies {
 
 ktor {
     fatJar {
-        archiveFileName.set("temperatureMonitor.jar")
+        archiveFileName.set("temperatureMonitor-$version.jar")
     }
 }

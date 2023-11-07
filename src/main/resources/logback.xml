@@ -3,6 +3,7 @@
         <encoder>
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
+        <file>homeAitMonitor.log</file>
     </appender>
     <root level="trace">
         <appender-ref ref="STDOUT"/>
