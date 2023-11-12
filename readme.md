@@ -1,0 +1,1 @@
+Logging on localhost to IDE console: `-Dlogback.configurationFile=logback-local.xml`
