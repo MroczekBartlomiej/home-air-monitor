@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "bar.tek"
-version = "0.0.1"
+version = "0.0.2-beta-2"
 
 application {
     mainClass.set("bar.tek.ApplicationKt")
@@ -39,7 +39,7 @@ dependencies {
     implementation("org.webjars:bootstrap:$bootstrap_version")
     implementation("org.webjars.npm:bootstrap-icons:1.11.1")
     implementation("org.mongodb:mongodb-driver-kotlin-sync:4.11.0")
-
+    implementation("ch.qos.logback:logback-core:1.4.11")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

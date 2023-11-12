@@ -4,6 +4,7 @@ import bar.tek.pastData.PastTemperatureDataRepository
 import bar.tek.api.appRouting
 import bar.tek.pastData.PastTemperatureDataService
 import bar.tek.realTimeData.Every
+import bar.tek.realTimeData.RealDataRepository
 import bar.tek.realTimeData.Scheduler
 import bar.tek.realTimeData.SensorClient
 import bar.tek.realTimeData.SensorService
@@ -15,12 +16,15 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 import io.ktor.server.webjars.Webjars
+import io.ktor.util.logging.KtorSimpleLogger
 import kotlinx.css.CssBuilder
 import java.util.concurrent.TimeUnit
 
+val LOGGER = KtorSimpleLogger("bar.tek.App")
+
 fun main() {
     val pastTemperatureDataService = PastTemperatureDataService(PastTemperatureDataRepository())
-    val sensorService = SensorService(SensorClient(), PastTemperatureDataRepository())
+    val sensorService = SensorService(SensorClient(), RealDataRepository())
     val scheduler = Scheduler(sensorService::readTemperature)
     scheduler.scheduleExecution(Every(5, TimeUnit.MINUTES))
 
@@ -35,5 +39,6 @@ fun main() {
 }
 
 suspend inline fun ApplicationCall.respondCss(builder: CssBuilder.() -> Unit) {
+    LOGGER.info("Execution method from CSS.")
     this.respondText(CssBuilder().apply(builder).toString(), ContentType.Text.CSS)
 }
