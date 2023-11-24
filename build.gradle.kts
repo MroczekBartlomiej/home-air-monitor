@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "bar.tek"
-version = "0.0.2-beta-2"
+version = "0.0.4"
 
 application {
     mainClass.set("bar.tek.ApplicationKt")
@@ -29,12 +29,14 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("org.jetbrains.kotlin-wrappers:kotlin-css:$kotlin_css_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-server-webjars:$ktor_version")
     implementation("org.webjars:bootstrap:$bootstrap_version")
     implementation("org.webjars.npm:bootstrap-icons:1.11.1")

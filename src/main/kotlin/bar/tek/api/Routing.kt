@@ -118,7 +118,7 @@ fun Route.appRouting(sensorService: SensorService, pastTemperatureDataService: P
         }
     }
 
-    get("/devices") {
+    get("/devices2") {
         call.respondHtml {
             head {
                 head()
