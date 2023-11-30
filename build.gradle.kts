@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "bar.tek"
-version = "0.0.4"
+version = "0.0.6"
 
 application {
     mainClass.set("bar.tek.ApplicationKt")
