@@ -22,7 +22,7 @@ class SensorService(
                 PastTemperatureDataMongoDocument(
                     ObjectId(),
                     dataFromSensor.temperature,
-                    dataFromSensor.humidity,
+                    calibrateHumiditySensor(dataFromSensor.humidity),
                     LocalDateTime.now(),
                     it.deviceName
                 )
@@ -30,6 +30,12 @@ class SensorService(
             dataFromSensors.add(dataFromSensor)
         }
         return dataFromSensors
+    }
+
+
+    //New sensors show to height value compared to Xiaomi sensor.
+    private fun calibrateHumiditySensor(humidity:String): String {
+        return (humidity.toInt() - 10).toString()
     }
 
 }
