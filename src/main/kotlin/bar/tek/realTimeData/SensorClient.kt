@@ -1,5 +1,6 @@
 package bar.tek.realTimeData
 
+import bar.tek.Device
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -22,9 +23,9 @@ class SensorClient(
     }
 ) {
 
-    suspend fun callSensor(): DataFromSensor {
-        LOGGER.info("Reading temperature from sensor.")
-        val body = client.get("http://192.168.0.114:88/")
+    suspend fun callSensor(sensor: Device): DataFromSensor {
+        LOGGER.info("Reading temperature from sensor ${sensor.deviceName} IP: ${sensor.deviceIp}")
+        val body = client.get(sensor.deviceIp)
             .also { LOGGER.info("Temperature reading completed with status: ${it.status.value } : ${it.status.description } ") }
             .body<DataFromSensor>()
         return body

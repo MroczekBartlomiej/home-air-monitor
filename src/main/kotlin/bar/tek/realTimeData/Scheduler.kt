@@ -12,11 +12,9 @@ class Scheduler(private val task: Runnable) {
         val taskWrapper = Runnable {
             task.runCatching { task.run() }
                 .onSuccess { LOG.info("Task completed successfully.") }
-                .onFailure { LOG.error("Task failed: ${it.message}")
-                    executor.scheduleWithFixedDelay(task, every.n, every.n, every.unit)
-                }
+                .onFailure { LOG.error("Task failed: ${it.message}") }
         }
-        executor.scheduleWithFixedDelay(task, every.n, every.n, every.unit)
+        executor.scheduleWithFixedDelay(taskWrapper, every.n, every.n, every.unit)
     }
 
 }

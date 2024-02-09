@@ -44,9 +44,9 @@ fun Route.devicesRouting(deviceService: DeviceService) {
         }
     }
 
-    delete("/devices") {
-        val command = call.receive<DeleteDeviceCommand>()
-        val removeDevice = deviceService.removeDevice(command)
+    delete("/devices/{deviceId}") {
+        val deviceId = call.parameters["deviceId"]
+        val removeDevice = deviceId?.let { id -> deviceService.removeDevice(id) }
         if (removeDevice == 1L) {
             call.respond(status = HttpStatusCode.Accepted, "")
         } else {

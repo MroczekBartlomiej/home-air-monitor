@@ -19,9 +19,9 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
         return deviceRepository.saveDevice(createDeviceCommand)
     }
 
-    fun removeDevice(command: DeleteDeviceCommand): Long {
-        LOGGER.info("Removing devices with id: ${command.deviceId}")
-        return deviceRepository.deleteDevice(ObjectId(command.deviceId))
+    fun removeDevice(deviceId: String): Long {
+        LOGGER.info("Removing devices with id: $deviceId")
+        return deviceRepository.deleteDevice(ObjectId(deviceId))
     }
 
     fun updateDevice(command: UpdateDeviceCommand): Long {

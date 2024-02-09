@@ -36,7 +36,7 @@ class DeviceRepository: BaseRepository() {
     }
 
     fun updateDevice(command: UpdateDeviceCommand): Long {
-        val filters = Filters.eq("_id", ObjectId(command.deviceId))
+        val filters = Filters.eq("_id", ObjectId(command.id))
         val update = Updates.combine(
             Updates.set(DeviceDocument::name.name, command.name),
             Updates.set(DeviceDocument::ipAddress.name, command.ipAddress)

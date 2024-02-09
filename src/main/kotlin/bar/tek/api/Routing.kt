@@ -27,19 +27,6 @@ import kotlinx.html.unsafe
 
 
 fun Route.appRouting(sensorService: SensorService, pastTemperatureDataService: PastTemperatureDataService) {
-    //Endpoint tylko i wyłącznie demnstracyjny na potrzeby prezentacji
-    get("/temperature") {
-        call.respondHtml(HttpStatusCode.OK) {
-            val dataFromSensor = sensorService.readTemperature()
-            head { title("Home Air Monitor") }
-            body {
-                h1 { +"Home Air Monitor" }
-                p { +"temperature ${dataFromSensor.temperature}" }
-                p { +"humidity ${dataFromSensor.humidity}" }
-            }
-        }
-    }
-
 
 //HTML and CSS
     get("/home") {
@@ -63,60 +50,7 @@ fun Route.appRouting(sensorService: SensorService, pastTemperatureDataService: P
             }
         }
     }
-    get("/graphs") {
-        val dataFromSensors = pastTemperatureDataService.getPastData(1L)
-        val temperature = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.temperature }
-        val labels = dataFromSensors.map { dataFromSensorMongoDocument -> dataFromSensorMongoDocument.readTime.toString() }
 
-        val label = labels.joinToString(prefix = "'", separator = "','", postfix = "'")
-        val data = temperature.joinToString(prefix = "'", separator = "','", postfix = "'")
-
-        call.respondHtml {
-            head {
-                head()
-            }
-            body {
-                div(classes = "px-3 py-2 text-bg-dark border-bottom", block = header())
-                div { h1 { +"graphs" } }
-                div(classes = "d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start") {
-                    div(classes = "container") {
-                        unsafe {
-                            +"""
-                    <div>
-              <canvas id="myChart"></canvas>
-            </div>
-
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-            <script>
-              const ctx = document.getElementById('myChart');
-
-              new Chart(ctx, {
-                type: 'line',
-                data: {
-                  labels:[$label],
-                  datasets: [{
-                    data: [$data],
-                    borderWidth: 1,
-                    tension: 0.5
-                  }]
-                },
-                options: {
-                  scales: {
-                    y: {
-                      beginAtZero: false
-                    }
-                  }
-                }
-              });
-            </script>
-                """.trimIndent()
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     get("/devices2") {
         call.respondHtml {
@@ -162,15 +96,17 @@ fun sensorsBody(sensorService: SensorService): DIV.() -> Unit = {
 fun sensorCard(sensorService: SensorService): DIV.() -> Unit = {
     val readTemperature = sensorService.readTemperature()
     div(classes = "card-group") {
-        div(classes = "card") {
-            div(classes = "card-body") {
-                h5(classes = "card-title") { +"Sypialnia" }
-                p(classes = "card-text") {
-                    p(classes = "bi bi-thermometer-half") { +" Temperature: ${readTemperature.temperature}" }
-                    p(classes = "bi bi-moisture") { +" Humidity: ${readTemperature.humidity}" }
+        readTemperature.forEach {
+            div(classes = "card") {
+                div(classes = "card-body") {
+                    h5(classes = "card-title") { +"Sypialnia" }
+                    p(classes = "card-text") {
+                        p(classes = "bi bi-thermometer-half") { +" Temperature: ${it.temperature}" }
+                        p(classes = "bi bi-moisture") { +" Humidity: ${it.humidity}" }
+                    }
                 }
-            }
-            div(classes = "card-footer") {
+                div(classes = "card-footer") {
+                }
             }
         }
     }
