@@ -1,10 +1,6 @@
 package bar.tek.api
 
-import bar.tek.devices.CreateDeviceCommand
-import bar.tek.devices.DeleteDeviceCommand
-import bar.tek.devices.DeviceResponse
-import bar.tek.devices.DeviceService
-import bar.tek.devices.UpdateDeviceCommand
+import bar.tek.devices.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
@@ -18,39 +14,43 @@ import io.ktor.server.routing.put
 fun Route.devicesRouting(deviceService: DeviceService) {
 
     get("/devices") {
-        val deviceResponseList = deviceService.getAllDevices().map {
-            DeviceResponse(id = it.id.toString(), name = it.name, ipAddress = it.ipAddress, editDate = it.editDate, createDate = it.createDate)
-        }
-        call.respond(status = HttpStatusCode.OK, message = deviceResponseList)
+        val deviceResponseList = deviceService.getAllDevices().map { it.toResponse() }
+        call.respond(HttpStatusCode.OK, deviceResponseList)
     }
 
     post("/devices") {
         val command = call.receive<CreateDeviceCommand>()
-        val bsonValue = deviceService.addNewDevice(command)
-        if (bsonValue != null) {
-            call.respond(status = HttpStatusCode.Created, bsonValue.asObjectId().value.toString())
-        } else {
-            call.respond(status = HttpStatusCode.ExpectationFailed, "")
+        when (val result = deviceService.addNewDevice(command)) {
+            is Result.Success -> call.respond(HttpStatusCode.Created, result.data)
+            is Result.Failure -> call.respond(HttpStatusCode.ExpectationFailed, result.error.message ?: "Unknown error")
         }
     }
 
     put("/devices") {
         val command = call.receive<UpdateDeviceCommand>()
-        val updateDevice = deviceService.updateDevice(command)
-        if (updateDevice == 1L) {
-            call.respond(status = HttpStatusCode.Accepted, "")
-        } else {
-            call.respond(status = HttpStatusCode.ExpectationFailed, "Device not updated.")
+        when (val result = deviceService.updateDevice(command)) {
+            is Result.Success -> call.respond(HttpStatusCode.Accepted, "Device updated successfully.")
+            is Result.Failure -> call.respond(HttpStatusCode.ExpectationFailed, result.error.message ?: "Unknown error")
         }
     }
 
     delete("/devices/{deviceId}") {
         val deviceId = call.parameters["deviceId"]
-        val removeDevice = deviceId?.let { id -> deviceService.removeDevice(id) }
-        if (removeDevice == 1L) {
-            call.respond(status = HttpStatusCode.Accepted, "")
+        if (deviceId != null) {
+            when (val result = deviceService.removeDevice(deviceId)) {
+                is Result.Success -> call.respond(HttpStatusCode.Accepted, "Device removed successfully.")
+                is Result.Failure -> call.respond(HttpStatusCode.ExpectationFailed, result.error.message ?: "Unknown error")
+            }
         } else {
-            call.respond(status = HttpStatusCode.ExpectationFailed, "Device not removed.")
+            call.respond(HttpStatusCode.BadRequest, "Device ID is missing.")
         }
     }
 }
+
+private fun DeviceDocument.toResponse() = DeviceResponse(
+    id = this.id.toString(),
+    name = this.name,
+    ipAddress = this.ipAddress,
+    editDate = this.editDate,
+    createDate = this.createDate
+)

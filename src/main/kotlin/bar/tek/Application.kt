@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 val LOGGER = KtorSimpleLogger("bar.tek.App")
 
 fun main() {
-    val sensors: List<Device> = listOf(
+    val sensors = listOf(
         Device("http://192.168.0.151:88/", "Sypialnia"),
         Device("http://192.168.0.152:88/", "Pokój Witka"),
         Device("http://192.168.0.153:88/", "Salon"),
@@ -37,12 +37,11 @@ fun main() {
 
     val pastTemperatureDataService = PastTemperatureDataService(PastTemperatureDataRepository())
     val sensorService = SensorService(sensors, SensorClient(), RealDataRepository())
-    val scheduler = Scheduler(sensorService::readTemperature)
-    scheduler.scheduleExecution(Every(1, TimeUnit.MINUTES))
+    val scheduler = Scheduler(sensorService::readTemperature).apply {
+        scheduleExecution(Every(1, TimeUnit.MINUTES))
+    }
 
     val deviceService = DeviceService(DeviceRepository())
-
-
 
     embeddedServer(Netty, port = 8080, watchPaths = listOf("classes")) {
         install(CallLogging)
@@ -65,4 +64,3 @@ fun main() {
 }
 
 data class Device(val deviceIp: String, val deviceName: String)
-

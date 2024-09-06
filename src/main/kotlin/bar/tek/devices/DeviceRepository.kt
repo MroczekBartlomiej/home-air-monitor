@@ -7,42 +7,58 @@ import org.bson.BsonValue
 import org.bson.types.ObjectId
 import java.time.LocalDateTime
 
-class DeviceRepository: BaseRepository() {
+class DeviceRepository : BaseRepository() {
 
     fun saveDevice(command: CreateDeviceCommand): BsonValue? {
-        val deviceDocument = DeviceDocument(
-            id = ObjectId(),
-            name = command.name,
-            ipAddress = command.ipAddress,
-            editDate = LocalDateTime.now(),
-            createDate = LocalDateTime.now()
-        )
-        return database.getCollection<DeviceDocument>("devices")
-            .insertOne(deviceDocument)
-            .insertedId
+        return try {
+            val deviceDocument = DeviceDocument(
+                id = ObjectId(),
+                name = command.name,
+                ipAddress = command.ipAddress,
+                editDate = LocalDateTime.now(),
+                createDate = LocalDateTime.now()
+            )
+            database.getCollection<DeviceDocument>("devices")
+                .insertOne(deviceDocument)
+                .insertedId
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun getDevices(): List<DeviceDocument> {
-        return database.getCollection<DeviceDocument>("devices")
-            .find<DeviceDocument>()
-            .toList()
+        return try {
+            database.getCollection<DeviceDocument>("devices")
+                .find<DeviceDocument>()
+                .toList()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     fun deleteDevice(objectId: ObjectId): Long {
-        val filters = Filters.eq("_id", objectId)
-        return database.getCollection<DeviceDocument>("devices")
-            .deleteOne(filters)
-            .deletedCount
+        return try {
+            val filters = Filters.eq("_id", objectId)
+            database.getCollection<DeviceDocument>("devices")
+                .deleteOne(filters)
+                .deletedCount
+        } catch (e: Exception) {
+            0L
+        }
     }
 
     fun updateDevice(command: UpdateDeviceCommand): Long {
-        val filters = Filters.eq("_id", ObjectId(command.id))
-        val update = Updates.combine(
-            Updates.set(DeviceDocument::name.name, command.name),
-            Updates.set(DeviceDocument::ipAddress.name, command.ipAddress)
-        )
-        return database.getCollection<DeviceDocument>("devices")
-            .updateOne(filters, update)
-            .modifiedCount
+        return try {
+            val filters = Filters.eq("_id", ObjectId(command.id))
+            val update = Updates.combine(
+                Updates.set(DeviceDocument::name.name, command.name),
+                Updates.set(DeviceDocument::ipAddress.name, command.ipAddress)
+            )
+            database.getCollection<DeviceDocument>("devices")
+                .updateOne(filters, update)
+                .modifiedCount
+        } catch (e: Exception) {
+            0L
+        }
     }
 }
