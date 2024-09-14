@@ -1,13 +1,13 @@
 package bar.tek.realTimeData
 
-import bar.tek.Device
+import bar.tek.devices.DeviceDto
 import bar.tek.pastData.PastTemperatureDataMongoDocument
+import java.time.LocalDateTime
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
-import java.time.LocalDateTime
 
 class SensorService(
-    private val sensorsList: List<Device>,
+    private val sensorsList: List<DeviceDto>,
     private val sensorClient: SensorClient,
     private val realDataRepository: RealDataRepository
 ) {
@@ -24,7 +24,7 @@ class SensorService(
                     dataFromSensor.temperature,
                     calibrateHumiditySensor(dataFromSensor.humidity),
                     LocalDateTime.now(),
-                    it.deviceName
+                    it.name
                 )
             realDataRepository.save(dataFromSensorDocument)
             dataFromSensors.add(dataFromSensor)

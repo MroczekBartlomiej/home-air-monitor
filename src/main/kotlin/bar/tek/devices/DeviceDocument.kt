@@ -9,6 +9,7 @@ data class DeviceDocument(
     val id: ObjectId,
     val name: String,
     val ipAddress: String,
+    val enabled: Boolean,
     val editDate: LocalDateTime,
     val createDate: LocalDateTime
 )

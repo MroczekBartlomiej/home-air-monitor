@@ -1,12 +1,8 @@
 package bar.tek
 
-import bar.tek.api.appRouting
-import bar.tek.api.devicesRouting
-import bar.tek.api.graphRouting
+import bar.tek.devices.DeviceDto
 import bar.tek.devices.DeviceRepository
 import bar.tek.devices.DeviceService
-import bar.tek.pastData.PastTemperatureDataRepository
-import bar.tek.pastData.PastTemperatureDataService
 import bar.tek.realTimeData.Every
 import bar.tek.realTimeData.RealDataRepository
 import bar.tek.realTimeData.Scheduler
@@ -21,27 +17,33 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import io.ktor.server.webjars.Webjars
 import io.ktor.util.logging.KtorSimpleLogger
-import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
+import kotlinx.serialization.json.Json
 
 val LOGGER = KtorSimpleLogger("bar.tek.App")
 
 fun main() {
-    val sensors = listOf(
-        Device("http://192.168.0.151:88/", "Sypialnia"),
-        Device("http://192.168.0.152:88/", "Pokój Witka"),
-        Device("http://192.168.0.153:88/", "Salon"),
+//    val sensors = listOf(
+//        Device("http://192.168.0.151:88/", "Sypialnia"),
+//        Device("http://192.168.0.152:88/", "Pokój Witka"),
+//        Device("http://192.168.0.153:88/", "Salon"),
 //        Device("http://192.168.0.154:88/", "Kuchnia"),
 //        Device("http://192.168.0.155:88/", "Balkon ")
-    )
+//    )
 
-    val pastTemperatureDataService = PastTemperatureDataService(PastTemperatureDataRepository())
+
+    val sensors = emptyList<DeviceDto>()
+    val deviceService = DeviceService(DeviceRepository())
     val sensorService = SensorService(sensors, SensorClient(), RealDataRepository())
-    val scheduler = Scheduler(sensorService::readTemperature).apply {
+
+    Scheduler(deviceService::getAllDevices).apply {
+        scheduleExecution(Every(3, TimeUnit.MINUTES))
+    }
+
+    Scheduler(sensorService::readTemperature).apply {
         scheduleExecution(Every(1, TimeUnit.MINUTES))
     }
 
-    val deviceService = DeviceService(DeviceRepository())
 
     embeddedServer(Netty, port = 8080, watchPaths = listOf("classes")) {
         install(CallLogging)
@@ -56,11 +58,8 @@ fun main() {
             })
         }
         routing {
-            appRouting(sensorService, pastTemperatureDataService)
-            devicesRouting(deviceService)
-            graphRouting(pastTemperatureDataService)
         }
+        LOGGER.info("Application started")
     }.start(wait = true)
 }
 
-data class Device(val deviceIp: String, val deviceName: String)
