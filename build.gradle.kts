@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "bar.tek"
-version = "0.0.9"
+version = "0.1.0"
 
 application {
     mainClass.set("bar.tek.ApplicationKt")
@@ -28,6 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-html-builder-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")

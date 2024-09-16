@@ -1,4 +1,9 @@
 <configuration>
+    <appender name="WEBSOCKET" class="bar.tek.shared.WebSocketAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -12,10 +17,11 @@
         </encoder>
     </appender>
     <root level="trace">
+        <appender-ref ref="WEBSOCKET"/>
         <appender-ref ref="FILE"/>
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="org.mongodb.driver.cluster" level="WARN" />
-    <logger name="org.mongodb.driver.connection" level="WARN" />
+    <logger name="org.mongodb.driver.cluster" level="WARN"/>
+    <logger name="org.mongodb.driver.connection" level="WARN"/>
 </configuration>

@@ -16,12 +16,24 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import io.ktor.server.webjars.Webjars
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.webSocket
 import io.ktor.util.logging.KtorSimpleLogger
+import io.ktor.websocket.Frame
+import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.serialization.json.Json
 
 val LOGGER = KtorSimpleLogger("bar.tek.App")
+val logChannel = BroadcastChannel<String>(Channel.BUFFERED)
 
+
+@OptIn(ObsoleteCoroutinesApi::class)
 fun main() {
 //    val sensors = listOf(
 //        Device("http://192.168.0.151:88/", "Sypialnia"),
@@ -46,6 +58,9 @@ fun main() {
 
 
     embeddedServer(Netty, port = 8080, watchPaths = listOf("classes")) {
+        install(WebSockets) {
+            pingPeriod = Duration.ofMinutes(1)
+        }
         install(CallLogging)
         install(Webjars) {
             path = "assets"
@@ -58,6 +73,16 @@ fun main() {
             })
         }
         routing {
+            webSocket("/logs") {
+                val subscription = logChannel.openSubscription()
+                try {
+                    subscription.consumeEach { message ->
+                        outgoing.send(Frame.Text(message))
+                    }
+                } finally {
+                    subscription.cancel()
+                }
+            }
         }
         LOGGER.info("Application started")
     }.start(wait = true)
