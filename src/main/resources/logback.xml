@@ -10,7 +10,7 @@
             <fileNamePattern>application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
-            <totalSizeCap>10GB</totalSizeCap>
+            <totalSizeCap>200MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -22,6 +22,8 @@
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
+    <logger name="io.ktor.websocket.WebSocket" level="ERROR" />
     <logger name="org.mongodb.driver.cluster" level="WARN"/>
     <logger name="org.mongodb.driver.connection" level="WARN"/>
+    <logger name="org.mongodb.driver.operation" level="WARN"/>
 </configuration>

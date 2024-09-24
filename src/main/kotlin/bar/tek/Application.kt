@@ -45,8 +45,9 @@ fun main() {
 
 
     val sensors = emptyList<DeviceDto>()
-    val deviceService = DeviceService(DeviceRepository())
-    val sensorService = SensorService(sensors, SensorClient(), RealDataRepository())
+    val deviceService = DeviceService(DeviceRepository(), sensors)
+    val sensorService = SensorService({ deviceService.sensorsList }, SensorClient(), RealDataRepository())
+    deviceService.getAllDevices()
 
     Scheduler(deviceService::getAllDevices).apply {
         scheduleExecution(Every(3, TimeUnit.MINUTES))
@@ -57,7 +58,7 @@ fun main() {
     }
 
 
-    embeddedServer(Netty, port = 8080, watchPaths = listOf("classes")) {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", watchPaths = listOf("classes")) {
         install(WebSockets) {
             pingPeriod = Duration.ofMinutes(1)
         }

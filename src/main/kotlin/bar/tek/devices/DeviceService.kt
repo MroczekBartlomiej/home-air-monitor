@@ -4,11 +4,12 @@ import io.ktor.util.logging.KtorSimpleLogger
 
 val LOGGER = KtorSimpleLogger("bar.tek.devices.DeviceService")
 
-class DeviceService(private val deviceRepository: DeviceRepository) {
+class DeviceService(private val deviceRepository: DeviceRepository,
+     var sensorsList: List<DeviceDto>) {
 
-    fun getAllDevices(): List<DeviceDto> {
+    fun getAllDevices() {
         LOGGER.info("Fetching all devices")
-        return deviceRepository.getDevices()
+        sensorsList = deviceRepository.getDevices()
             .map { it.toDto() }
     }
 
@@ -18,7 +19,6 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
         enabled = enabled,
         ipAddress = ipAddress
     )
-
 }
 
 sealed class Result<out T> {

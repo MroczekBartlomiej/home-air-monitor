@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "bar.tek"
-version = "0.1.0"
+version = "0.1.2"
 
 application {
     mainClass.set("bar.tek.ApplicationKt")
@@ -25,6 +25,9 @@ repositories {
 }
 
 dependencies {
+    implementation ("ch.qos.logback:logback-classic:1.2.6")
+    implementation ("org.slf4j:slf4j-api:1.7.32")
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-html-builder-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")

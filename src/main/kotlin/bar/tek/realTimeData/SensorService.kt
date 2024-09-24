@@ -7,13 +7,15 @@ import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 
 class SensorService(
-    private val sensorsList: List<DeviceDto>,
+    private val getSensorsList: () -> List<DeviceDto>,
     private val sensorClient: SensorClient,
     private val realDataRepository: RealDataRepository
 ) {
 
     fun readTemperature(): List<DataFromSensor> {
         val dataFromSensors = mutableListOf<DataFromSensor>()
+        val sensorsList = getSensorsList()
+        println("sensorList: $sensorsList")
         sensorsList.forEach {
             val dataFromSensor = runBlocking {
                 return@runBlocking sensorClient.callSensor(it)
@@ -35,7 +37,7 @@ class SensorService(
 
     //New sensors show to height value compared to Xiaomi sensor.
     private fun calibrateHumiditySensor(humidity:String): String {
-        return (humidity.toInt() - 10).toString()
+        return (humidity.toFloat() - 10).toString()
     }
 
 }
