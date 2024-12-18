@@ -3,7 +3,6 @@ package bar.tek
 import bar.tek.devices.DeviceDto
 import bar.tek.devices.DeviceRepository
 import bar.tek.devices.DeviceService
-import bar.tek.realTimeData.Every
 import bar.tek.realTimeData.RealDataRepository
 import bar.tek.realTimeData.Scheduler
 import bar.tek.realTimeData.SensorClient
@@ -22,7 +21,6 @@ import io.ktor.server.websocket.webSocket
 import io.ktor.util.logging.KtorSimpleLogger
 import io.ktor.websocket.Frame
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -50,11 +48,11 @@ fun main() {
     deviceService.getAllDevices()
 
     Scheduler(deviceService::getAllDevices).apply {
-        scheduleExecution(Every(3, TimeUnit.MINUTES))
+        scheduleExecutionAtFixedMinutes(listOf(3, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58))
     }
 
     Scheduler(sensorService::readTemperature).apply {
-        scheduleExecution(Every(1, TimeUnit.MINUTES))
+        scheduleExecutionAtFixedMinutes(listOf(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55))
     }
 
 
